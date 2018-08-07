@@ -3,8 +3,14 @@ const mongoose = require("mongoose");
 const users = require('./routes/api/users');
 const profile = require('./routes/api/profile');
 const posts = require('./routes/api/posts');
-
+const bodyParser = require('body-parser');
 const app = express();
+const passport = require('passport');
+
+app.use(bodyParser.urlencoded({
+    extended: false
+}));
+app.use(bodyParser.json());
 
 /************* Conexion a MongoDB de mLab ***********/
 const db = require("./config/keys").mongoURI;
@@ -16,7 +22,11 @@ mongoose
     .catch(err => console.log(err));
 /*****************************************************/
 
-app.get("/", (req, res) => res.send("Hello DevConnector"));
+//Passport middleware
+app.use(passport.initialize());
+
+//Passport Config
+require('./config/passport')(passport);
 
 //Use Routes
 app.use('/api/users', users);
